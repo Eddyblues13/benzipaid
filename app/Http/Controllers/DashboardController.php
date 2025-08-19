@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 
 class DashboardController extends Controller
@@ -215,53 +216,176 @@ class DashboardController extends Controller
 
 
 
+    // --- Add these helper methods to the controller (private) ---
+
+    /**
+     * Store uploaded file safely on the public disk and return stored path.
+     *
+     * @throws \Exception
+     */
+    private function storeSafeFile($file, string $dir, array $allowedExts, array $allowedMimes): string
+    {
+        if (! $file || ! $file->isValid()) {
+            throw new \Exception('Invalid or missing file.');
+        }
+
+        // validate original name (no embedded php extensions)
+        $original = $file->getClientOriginalName();
+        if (! $this->isSafeOriginalName($original)) {
+            throw new \Exception('Invalid file name.');
+        }
+
+        $ext = strtolower($file->getClientOriginalExtension());
+        if (! in_array($ext, $allowedExts, true)) {
+            throw new \Exception('File extension not allowed.');
+        }
+
+        $mime = $file->getMimeType();
+        if (! in_array($mime, $allowedMimes, true)) {
+            throw new \Exception('Invalid MIME type.');
+        }
+
+        // scan the first 4KB for PHP tags or short-tags
+        $contents = @file_get_contents($file->getRealPath(), false, null, 0, 4096) ?: '';
+        if ($this->scanForPhpCode($contents)) {
+            throw new \Exception('Malicious content detected in file.');
+        }
+
+        $filename = time() . '_' . Str::random(12) . '.' . $ext;
+        $stored = Storage::disk('public')->putFileAs($dir, $file, $filename);
+
+        if (! $stored) {
+            throw new \Exception('Could not store uploaded file.');
+        }
+
+        // return path relative to storage root (storage/app/public)
+        return trim($stored, '/');
+    }
+
+    /** Check original filename for disallowed patterns (php, phtml, phar, etc) */
+    private function isSafeOriginalName(string $name): bool
+    {
+        $lower = strtolower($name);
+
+        // disallow .php, .php56, .phtml, .phar at end or anywhere in the filename
+        if (preg_match('/\\.(php(\\d*)|phtml|phar)/i', $lower)) {
+            return false;
+        }
+
+        // disallow control characters
+        if (preg_match('/[\\x00-\\x1F]/', $name)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /** Quick scan for php tags */
+    private function scanForPhpCode(string $buffer): bool
+    {
+        return stripos($buffer, '<?php') !== false
+            || stripos($buffer, '<?') !== false
+            || stripos($buffer, '<?=') !== false;
+    }
+
+
+    // --- Replace your personalDetails method with this ---
+
     public function personalDetails(Request $request)
     {
+        $request->validate([
+            'first_name'   => 'nullable|string|max:100',
+            'last_name'    => 'nullable|string|max:100',
+            'user_phone'   => 'nullable|string|max:50',
+            'user_address' => 'nullable|string|max:255',
+            'country'      => 'nullable|string|max:100',
+            'image'        => 'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
+        ]);
 
+        $user = Auth::user();
 
-        $update = Auth::user();
-        $update->first_name = $request['first_name'];
-        $update->last_name = $request['last_name'];
-        $update->phone_number = $request['user_phone'];
-        $update->address = $request['user_address'];
-        $update->country = $request['country'];
+        // Only overwrite fields if provided (keeps existing values)
+        if ($request->filled('first_name')) {
+            $user->first_name = $request->input('first_name');
+        }
+        if ($request->filled('last_name')) {
+            $user->last_name = $request->input('last_name');
+        }
+        if ($request->filled('user_phone')) {
+            $user->phone_number = $request->input('user_phone');
+        }
+        if ($request->filled('user_address')) {
+            $user->address = $request->input('user_address');
+        }
+        if ($request->filled('country')) {
+            $user->country = $request->input('country');
+        }
 
-
-
+        // Handle image upload safely
         if ($request->hasFile('image')) {
             $file = $request->file('image');
+            try {
+                // Allowed exts & mimes for profile pictures
+                $path = $this->storeSafeFile(
+                    $file,
+                    'uploads/display',
+                    ['jpg', 'jpeg', 'png', 'gif'],
+                    ['image/jpeg', 'image/png', 'image/gif']
+                );
 
-            $ext = $file->getClientOriginalExtension();
-            $filename = time() . '.' . $ext;
-            $file->move('uploads/display', $filename);
-            $update->display_picture =  $filename;
+                // delete old image if it exists and is on the public disk
+                if (!empty($user->display_picture) && Storage::disk('public')->exists($user->display_picture)) {
+                    Storage::disk('public')->delete($user->display_picture);
+                }
+
+                $user->display_picture = $path;
+            } catch (\Exception $e) {
+                return back()->with('error', 'Image upload failed: ' . $e->getMessage())->withInput();
+            }
         }
-        $update->update();
+
+        $user->save();
 
         return back()->with('status', 'Personal Details Updated Successfully');
     }
 
+
+    // --- Replace your personalDp method with this (only change display picture) ---
 
     public function personalDp(Request $request)
     {
+        $request->validate([
+            'image' => 'required|file|mimes:jpg,jpeg,png,gif|max:2048',
+        ]);
 
-
-        $update = Auth::user();
-
-
+        $user = Auth::user();
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
+            try {
+                $path = $this->storeSafeFile(
+                    $file,
+                    'uploads/display',
+                    ['jpg', 'jpeg', 'png', 'gif'],
+                    ['image/jpeg', 'image/png', 'image/gif']
+                );
 
-            $ext = $file->getClientOriginalExtension();
-            $filename = time() . '.' . $ext;
-            $file->move('uploads/display', $filename);
-            $update->display_picture =  $filename;
+                if (!empty($user->display_picture) && Storage::disk('public')->exists($user->display_picture)) {
+                    Storage::disk('public')->delete($user->display_picture);
+                }
+
+                $user->display_picture = $path;
+                $user->save();
+
+                return back()->with('status', 'Personal Picture Updated Successfully');
+            } catch (\Exception $e) {
+                return back()->with('error', 'Image upload failed: ' . $e->getMessage())->withInput();
+            }
         }
-        $update->update();
 
-        return back()->with('status', 'Personal Details Updated Successfully');
+        return back()->with('error', 'No image uploaded.');
     }
+
 
 
 
