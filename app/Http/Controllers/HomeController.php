@@ -8,24 +8,24 @@ use App\Models\Deposit;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Validator;
 
 class HomeController extends Controller
 {
-    // Allowed file configuration
-    private const IMAGE_EXTS = ['jpg', 'jpeg', 'png', 'gif'];
-    private const DOC_EXTS   = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
-    private const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/gif'];
-    private const DOC_MIMES   = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
-    private const MAX_KB = 2048;
-
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function index()
     {
         return view('home');
@@ -33,376 +33,728 @@ class HomeController extends Controller
 
     public function card()
     {
-        $data['details'] = Card::where('user_id', Auth::id())->get();
+
+        $data['details'] = Card::where('user_id', Auth::user()->id)->get();
         return view('dashboard.card', $data);
     }
 
     public function cardApplication()
     {
-        $data['details'] = Card::where('user_id', Auth::id())->get();
+
+        $data['details'] = Card::where('user_id', Auth::user()->id)->get();
         return view('dashboard.card_application', $data);
     }
+
 
     public function checkPage()
     {
         return view('dashboard.check');
     }
 
-    /**
-     * Upload cheque images safely to storage/app/public/checks/...
-     */
+
     public function checkUpload(Request $request)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:1',
-            'check_description' => 'required|string|max:255',
-            'check_front' => 'required|file|max:' . self::MAX_KB,
-            'check_back'  => 'required|file|max:' . self::MAX_KB,
+            'amount' => 'required|string',
+            'check_description' => 'required|string',
+            'check_front' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'check_back' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        try {
-            $frontPath = $this->storeSafeFile($request->file('check_front'), 'checks/front', self::IMAGE_EXTS, self::IMAGE_MIMES);
-            $backPath  = $this->storeSafeFile($request->file('check_back'), 'checks/back', self::IMAGE_EXTS, self::IMAGE_MIMES);
+        // Store the files
+        $frontPath = $request->file('check_front')->store('checks/front', 'public');
+        $backPath = $request->file('check_back')->store('checks/back', 'public');
 
-            Deposit::create([
-                'user_id' => Auth::id(),
-                'amount' => (float) $request->input('amount'),
-                'deposit_type' => $request->input('check_description'),
-                'front_cheque' => $frontPath,
-                'back_cheque'  => $backPath,
-                'status' => 0,
-            ]);
 
-            return redirect()->back()->with('status', 'Check uploaded successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Upload failed: ' . $e->getMessage())->withInput();
-        }
+        Deposit::create([
+            'user_id' => Auth::user()->id,
+            'amount' => $request->amount,
+            'deposit_type' => $request->check_description,
+            'front_cheque' => $frontPath,
+            'back_cheque' => $backPath,
+            'status' => 0,
+        ]);
+
+        return redirect()->back()->with('status', 'Check uploaded successfully!');
     }
+
 
     public function kycPage()
     {
         return view('dashboard.kyc');
     }
 
+
     public function kycUpload(Request $request)
     {
         $request->validate([
             'full_name' => 'required|string|max:255',
-            'id_document' => 'required|file|max:' . self::MAX_KB,
-            'proof_address' => 'required|file|max:' . self::MAX_KB,
+            'id_document' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'proof_address' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
 
-        try {
-            $idPath = $this->storeSafeFile($request->file('id_document'), 'kyc/id_documents', self::DOC_EXTS, self::DOC_MIMES);
-            $addressPath = $this->storeSafeFile($request->file('proof_address'), 'kyc/proof_addresses', self::DOC_EXTS, self::DOC_MIMES);
+        // Store the files
+        $idPath = $request->file('id_document')->store('kyc/id_documents', 'public');
+        $addressPath = $request->file('proof_address')->store('kyc/proof_addresses', 'public');
 
-            $kyc = Auth::user();
-            $kyc->kyc_status = 0; // pending
-            $kyc->id_document = $idPath;
-            $kyc->proof_address = $addressPath;
-            $kyc->save();
+        $kyc = Auth::user();
+        $kyc->kyc_status = 0;
+        $kyc->id_document = $idPath;
+        $kyc->proof_address = $addressPath;
+        $kyc->save();
 
-            return redirect()->back()->with('status', 'KYC documents uploaded successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'KYC upload failed: ' . $e->getMessage())->withInput();
-        }
+        return redirect()->back()->with('status', 'KYC documents uploaded successfully!');
     }
 
     public function loan()
     {
-        $userId = Auth::id();
-        $data['outstanding_loan'] = Loan::where('user_id', $userId)->where('status', '1')->sum('amount');
-        $data['pending_loan'] = Loan::where('user_id', $userId)->where('status', '0')->sum('amount');
-        $data['transaction'] = Transaction::where('user_id', $userId)->where('transaction', 'Loan')->get();
+        $data['outstanding_loan'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['pending_loan'] = Loan::where('user_id', Auth::user()->id)->where('status', '0')->sum('amount');
+        $data['transaction'] = Transaction::where('user_id', Auth::user()->id)->where('transaction', 'Loan')->get();
         return view('dashboard.loan', $data);
     }
 
     public function makeLoan(Request $request)
     {
-        $request->validate([
-            'ssn' => 'required|string|max:100',
-            'amount' => 'required|numeric|min:1',
-        ]);
+
 
         $ssn = $request->input('ssn');
-        $amount = (float) $request->input('amount');
+        $amount = $request->input('amount');
 
-        if ($ssn !== Auth::user()->ssn) {
-            return back()->with('error', 'Incorrect SSN number!');
+        if ($ssn != Auth::user()->ssn) {
+            return back()->with('error', ' Incorrect SSN number!');
+        }
+        if ($amount > Auth::user()->eligible_loan) {
+            return back()->with('error', ' You are not eligible, please check your Eligibility or contact our administrator for more info!!');
         }
 
-        if ($amount > (float) Auth::user()->eligible_loan) {
-            return back()->with('error', 'You are not eligible, please check your eligibility or contact support.');
-        }
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
 
-        $balance = $this->computeBalance(Auth::id());
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
 
-        // additional internal checks could be placed here
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
 
-        $loan = new Loan();
-        $loan->user_id = Auth::id();
-        $loan->amount = $amount;
-        $loan->status = 0; // pending
+        $ref = rand(76503737, 12344994);
+
+
+
+        $loan = new Loan;
+        $loan->user_id = Auth::user()->id;
+        $loan->amount = $request['amount'];
+        $loan->status = 0;
         $loan->save();
 
-        $ref = strtoupper(uniqid('LN'));
-
-        $transaction = new Transaction();
-        $transaction->user_id = Auth::id();
+        $transaction = new Transaction;
+        $transaction->user_id = Auth::user()->id;
         $transaction->transaction_id = $loan->id;
-        $transaction->transaction_ref = $ref;
-        $transaction->transaction_type = 'Credit';
-        $transaction->transaction = 'Loan';
-        $transaction->transaction_amount = $amount;
-        $transaction->transaction_description = 'Requested a loan of ' . $amount;
-        $transaction->transaction_status = 0; // pending
+        $transaction->transaction_ref = "LN" . $ref;
+        $transaction->transaction_type = "Credit";
+        $transaction->transaction = "Loan";
+        $transaction->transaction_amount = $request['amount'];
+        $transaction->transaction_description = "Requested for a loan of " . $request['amount'];
+        $transaction->transaction_status = 0;
         $transaction->save();
+
+
 
         return back()->with('status', 'Loan detected, please wait for approval by the administrator');
     }
 
-    // The various transfer methods are refactored to use a single helper which validates balance and stores a safe session payload.
-
-    public function interBankTransfer(Request $request)
+    public function interBankTransfer()
     {
-        return $this->prepareTransferSession('inter_transfer', $request, 'Bank Transfer', 'TR');
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+        return view('dashboard.inter_bank', $data);
     }
 
-    public function localBankTransfer(Request $request)
+    public function localBankTransfer()
     {
-        return $this->prepareTransferSession('local_transfer', $request, 'Bank Transfer', 'TR');
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+        return view('dashboard.local_bank', $data);
     }
 
-    public function revolutBankTransfer(Request $request)
+    public function revolutBankTransfer()
     {
-        return $this->prepareTransferSession('revolut_transfer', $request, 'Revolut Withdrawal', 'REV');
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+        return view('dashboard.revolut', $data);
+    }
+    public function wiseBankTransfer()
+    {
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+        return view('dashboard.wise', $data);
     }
 
-    public function wiseBankTransfer(Request $request)
+    public function skrill()
     {
-        return $this->prepareTransferSession('wise_transfer', $request, 'Wise Withdrawal', 'WIS');
+
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        return view('dashboard.skrill', $data);
     }
+
+    public function crypto()
+    {
+
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        return view('dashboard.crypto', $data);
+    }
+
+    public function bank()
+    {
+
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        return view('dashboard.bank', $data);
+    }
+
+    public function paypal()
+    {
+
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+        return view('dashboard.paypal', $data);
+    }
+
+    public function interTransfer(Request $request)
+    {
+        // Calculate user balance
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        // Check if balance is sufficient
+        if ($data['balance'] <= 0 || $data['balance'] < $request->input('amount')) {
+            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')
+                ->withInput($request->all());
+        }
+
+
+        // Generate a transaction reference
+        $ref = rand(76503737, 12344994);
+
+        // Store transaction details in the session
+        session([
+            'inter_transfer' => [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => "TR" . $ref,
+                'transaction_ref' => "TR" . $ref,
+                'transaction_type' => "Debit",
+                'transaction' => "Bank Transfer",
+                'transaction_amount' => $request['amount'],
+                'transaction_description' => "Bank Transfer transaction",
+                'account_name' => $request['account_name'],
+                'account_number' => $request['account_number'],
+                'account_type' => $request['account_type'],
+                'bank_name' => $request['bank_name'],
+                'routing_number' => $request['routing_number'],
+                'transaction_status' => 0,
+            ]
+        ]);
+
+        // Redirect to a specific view
+        return view('dashboard.code', $data)->with('status', 'Please Enter Your correct routing number');
+    }
+
+
+    public function localTransfer(Request $request)
+    {
+        // Calculate user balance
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        // Check if balance is sufficient
+        if ($data['balance'] <= 0 || $data['balance'] < $request->input('amount')) {
+            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')
+                ->withInput($request->all());
+        }
+
+
+        // Generate a transaction reference
+        $ref = rand(76503737, 12344994);
+
+        // Store transaction details in the session
+        session([
+            'local_transfer' => [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => "TR" . $ref,
+                'transaction_ref' => "TR" . $ref,
+                'transaction_type' => "Debit",
+                'transaction' => "Bank Transfer",
+                'transaction_amount' => $request['amount'],
+                'transaction_description' => "Bank Transfer transaction",
+                'account_name' => $request['account_name'],
+                'account_number' => $request['account_number'],
+                'account_type' => $request['account_type'],
+                'bank_name' => $request['bank_name'],
+                'routing_number' => $request['routing_number'],
+                'transaction_status' => 0,
+            ]
+        ]);
+
+        // Redirect to a specific view
+        return view('dashboard.code', $data)->with('status', 'Please Enter Your correct routing number');
+    }
+
+    public function revolutTransfer(Request $request)
+    {
+        // Calculate user balance
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        // Check if balance is sufficient
+        if ($data['balance'] <= 0 || $data['balance'] < $request->input('amount')) {
+            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')
+                ->withInput($request->all());
+        }
+
+        // Generate a transaction reference
+        $ref = rand(76503737, 12344994);
+
+        // Store transaction details in the session
+        session([
+            'revolut_transfer' => [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => "REV" . $ref,
+                'transaction_ref' => "REV" . $ref,
+                'transaction_type' => "Debit",
+                'transaction' => "Revolut Withdrawal",
+                'transaction_amount' => $request['amount'],
+                'transaction_description' => "Revolut transaction",
+                'transaction_status' => 0,
+            ]
+        ]);
+
+        // Redirect to a specific view
+        return view('dashboard.code', $data)->with('status', 'Please Enter Your correct routing number');
+    }
+
+    public function wiseTransfer(Request $request)
+    {
+        // Calculate user balance
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        // Check if balance is sufficient
+        if ($data['balance'] <= 0 || $data['balance'] < $request->input('amount')) {
+            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')
+                ->withInput($request->all());
+        }
+
+
+        // Generate a transaction reference
+        $ref = rand(76503737, 12344994);
+
+        // Store transaction details in the session
+        session([
+            'wise_transfer' => [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => "WIS" . $ref,
+                'transaction_ref' => "WIS" . $ref,
+                'transaction_type' => "Debit",
+                'transaction' => "Wise Withdrawal",
+                'transaction_amount' => $request['amount'],
+                'transaction_description' => "Wise transaction",
+                'transaction_status' => 0,
+            ]
+        ]);
+
+        // Redirect to a specific view
+        return view('dashboard.code', $data)->with('status', 'Please Enter Your correct routing number');
+    }
+
 
     public function paypalTransfer(Request $request)
     {
-        return $this->prepareTransferSession('paypal_transfer', $request, 'Paypal Withdrawal', 'PAY');
+
+
+        // Calculate user balance
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        // Check if balance is sufficient
+        if ($data['balance'] <= 0 || $data['balance'] < $request->input('amount')) {
+            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')
+                ->withInput($request->all());
+        }
+
+        // Generate a transaction reference
+        $ref = rand(76503737, 12344994);
+
+        // Store transaction details in the session instead of the database
+        session([
+            'paypal_transfer' => [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => "PAY" . $ref,
+                'transaction_ref' => "PAY" . $ref,
+                'transaction_type' => "Debit",
+                'transaction' => "Paypal Withdrawal",
+                'transaction_amount' => $request->input('amount'),
+                'transaction_description' => "Paypal transaction",
+                'transaction_status' => 0,
+            ]
+        ]);
+
+        // Redirect to a specific view
+        return view('dashboard.code', $data)->with('status', 'Please Enter Your correct routing number');
     }
+
+
 
     public function skrillTransfer(Request $request)
     {
-        return $this->prepareTransferSession('skrill_transfer', $request, 'Skrill Withdrawal', 'SKR');
+
+
+        // Calculate user balance
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        // Check if balance is sufficient
+        if ($data['balance'] <= 0 || $data['balance'] < $request->input('amount')) {
+            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')
+                ->withInput($request->all());
+        }
+
+        // Generate a transaction reference
+        $ref = rand(76503737, 12344994);
+
+        // Store transaction details in the session instead of the database
+        session([
+            'skrill_transfer' => [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => "SKR" . $ref,
+                'transaction_ref' => "SKR" . $ref,
+                'transaction_type' => "Debit",
+                'transaction' => "Skrill Withdrawal",
+                'transaction_amount' => $request->input('amount'),
+                'transaction_description' => "Skrill transaction",
+                'transaction_status' => 0,
+            ]
+        ]);
+
+        // Redirect to a specific view
+        return view('dashboard.code', $data)->with('status', 'Please Enter Your correct routing number');
     }
+
+
 
     public function transferWesternUnion(Request $request)
     {
-        return $this->prepareTransferSession('western_union_transfer', $request, 'Western Union Withdrawal', 'WU', [
-            'recipient_name',
-            'recipient_country',
-            'recipient_city'
+
+        // Calculate user balance
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        // Check if balance is sufficient
+        if ($data['balance'] <= 0 || $data['balance'] < $request->input('amount')) {
+            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')
+                ->withInput($request->all());
+        }
+
+        // Generate a transaction reference
+        $ref = rand(76503737, 12344994);
+
+        // Generate a unique transaction reference
+        $ref = strtoupper(uniqid('WU'));
+
+        // Store transaction details in the session
+        session([
+            'western_union_transfer' => [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => $ref,
+                'transaction_ref' => $ref,
+                'transaction_type' => 'Debit',
+                'transaction' => 'Western Union Withdrawal',
+                'transaction_amount' => $request->input('amount'),
+                'transaction_description' => 'Western Union transfer to ' . $request->input('recipient_name'),
+                'transaction_status' => 0, // 0 for pending, 1 for completed
+                'recipient_name' => $request->input('recipient_name'),
+                'recipient_country' => $request->input('recipient_country'),
+                'recipient_city' => $request->input('recipient_city'),
+                // Include any additional details as needed
+            ]
         ]);
+
+        // Redirect to a confirmation or routing number view
+        return view('dashboard.code', $data)
+            ->with('status', 'Please enter your routing number to complete the Western Union withdrawal.');
     }
 
+
+
+
+
+    // Method to handle the main crypto transfer process
     public function cryptoTransfer(Request $request)
     {
-        return $this->prepareTransferSession('crypto_transfer', $request, 'Crypto Withdrawal', 'CRP', [
-            'wallet_type',
-            'wallet_address'
+
+
+        // Calculate user balance (same as above)
+        // Calculate user balance
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
+
+        // Check if balance is sufficient (same as above)
+        if ($data['balance'] <= 0 || $data['balance'] < $request->input('amount')) {
+            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')
+                ->withInput($request->all());
+        }
+        // Generate a transaction reference
+        $ref = rand(76503737, 12344994);
+
+        // Store transaction details in the session
+        session([
+            'crypto_transfer' => [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => "CRP" . $ref,
+                'transaction_ref' => "CRP" . $ref,
+                'transaction_type' => "Debit",
+                'transaction' => "Crypto Withdrawal",
+                'transaction_amount' => $request->input('amount'),
+                'wallet_type' => $request->input('wallet_type'),
+                'wallet_address' => $request->input('wallet_address'),
+                'transaction_description' => "Crypto Withdrawal transaction",
+                'transaction_status' => 0,
+            ]
         ]);
+
+        return view('dashboard.code', $data);
     }
 
-    /**
-     * Validates a VAT / routing code and persists any transfer sessions as transactions.
-     */
+
     public function validateVatCode(Request $request)
     {
-        $request->validate(['vatCode' => 'required|string']);
-        $vat_code = $request->input('vatCode');
+        // Retrieve the vat code input from the request
+        $vat_code = $request->input('vatCode'); // Corrected from 'vatCode' to 'vatCode'
 
-        if ($vat_code !== Auth::user()->first_code) {
-            return response()->json(['success' => false, 'message' => 'Incorrect VAT code!'], 422);
-        }
+        // Check if the input vat code matches the authenticated user's stored vat code
+        if ($vat_code == Auth::user()->first_code) {
 
-        $transferTypes = [
-            'paypal_transfer',
-            'inter_transfer',
-            'local_transfer',
-            'revolut_transfer',
-            'wise_transfer',
-            'crypto_transfer',
-            'skrill_transfer',
-            'western_union_transfer'
-        ];
+            // Retrieve session data for each transfer method
+            $transferTypes = [
+                'paypal_transfer',
+                'inter_transfer',
+                'local_transfer',
+                'revolut_transfer',
+                'wise_transfer',
+                'crypto_transfer',
+                'skrill_transfer',
+                'western_union_transfer',
+                'gcash_transfer',
+                'easypaisa_transfer',
+                'upi_transfer',
+                'bkash_transfer',
+                'vodafone_transfer',
+                'upasa_transfer',
+                'stc_pay_transfer',
+                'cash_app_transfer',
+                'apple_pay_transfer',
+                'pix_transfer',
+                'nequi_transfer',
+                'bancolombia_transfer',
+                'maya_transfer',
+                'line_pay_transfer',
+                'ali_pay_transfer',
+                'phonepe_transfer',
+                'jazzcash_transfer',
+                'm10_transfer',
+                'yape_transfer',
+                'wechat_transfer',
+                'upaisa_transfer',
+                'nagad_transfer',
+                'google_pay_transfer',
+                'esewa_transfer'
+            ];
 
-        $saved = 0;
+            // Array to store processed transactions
+            $transactions = [];
 
-        foreach ($transferTypes as $transferType) {
-            $transferData = session($transferType);
-            if (!is_array($transferData) || empty($transferData['transaction_amount'])) {
-                session()->forget($transferType);
-                continue;
+            // Function to process transfer details
+            $processTransfer = function ($transferData, $transferType) use (&$transactions) {
+                if ($transferData) {
+                    $transaction = new Transaction();
+                    $transaction->user_id = $transferData['user_id'];
+                    $transaction->transaction_id = $transferData['transaction_id'];
+                    $transaction->transaction_ref = $transferData['transaction_ref'];
+                    $transaction->transaction_type = $transferType;
+                    $transaction->transaction = $transferData['transaction'];
+                    $transaction->transaction_amount = $transferData['transaction_amount'];
+                    $transaction->transaction_description = $transferData['transaction_description'];
+                    $transaction->transaction_status = $transferData['transaction_status'];
+                    $transaction->save();
+                    $transactions[] = $transaction;
+
+                    // Forget the session for this transfer method
+                    session()->forget($transferType);
+                }
+            };
+
+            // Process each transfer type
+            foreach ($transferTypes as $transferType) {
+                $transferData = session($transferType);
+                $processTransfer($transferData, $transferType);
             }
 
-            $amount = (float) $transferData['transaction_amount'];
-            if ($amount <= 0) {
-                session()->forget($transferType);
-                continue;
+            // Return success response if at least one transaction was saved
+            if (!empty($transactions)) {
+                return response()->json(['success' => true, 'message' => 'Transactions saved successfully!']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'No transaction data in session!']);
             }
-
-            $txn = new Transaction();
-            $txn->user_id = (int) $transferData['user_id'];
-            $txn->transaction_id = $transferData['transaction_id'] ?? strtoupper(uniqid('TR'));
-            $txn->transaction_ref = $transferData['transaction_ref'] ?? $txn->transaction_id;
-            $txn->transaction_type = $transferData['transaction_type'] ?? 'Debit';
-            $txn->transaction = $transferData['transaction'] ?? $transferType;
-            $txn->transaction_amount = $amount;
-            $txn->transaction_description = $transferData['transaction_description'] ?? ($transferType . ' executed');
-            $txn->transaction_status = 0; // keep pending for admin approval
-            $txn->save();
-
-            session()->forget($transferType);
-            $saved++;
+        } else {
+            // CCIC code does not match
+            return response()->json(['success' => false, 'message' => 'Incorrect VAT code!']);
         }
-
-        if ($saved > 0) {
-            return response()->json(['success' => true, 'message' => 'Transactions saved successfully!']);
-        }
-
-        return response()->json(['success' => false, 'message' => 'No transaction data in session!'], 422);
     }
+
 
     public function loading(Request $request)
     {
-        $data['balance'] = $this->computeBalance(Auth::id());
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)->where('status', '1')->sum('amount');
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        $data['balance'] = $data['user_deposits'] +  $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
         $nextUrl = $request->get('nextUrl');
         return view('dashboard.loading', compact('nextUrl'), $data);
     }
 
+
     public function transactionSuccess()
     {
-        $userId = Auth::id();
-        $data['credit_transfers'] = Transaction::where('user_id', $userId)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
-        $data['debit_transfers'] = Transaction::where('user_id', $userId)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
-        $data['user_deposits'] = Deposit::where('user_id', $userId)->where('status', '1')->sum('amount');
-        $data['user_loans'] = Loan::where('user_id', $userId)->where('status', '1')->sum('amount');
-        $data['user_card'] = Card::where('user_id', $userId)->sum('amount');
+        $data['credit_transfers'] = Transaction::where('user_id', Auth::user()->id)
+            ->where('transaction_type', 'Credit')
+            ->where('transaction_status', '1')
+            ->sum('transaction_amount');
+
+        $data['debit_transfers'] = Transaction::where('user_id', Auth::user()->id)
+            ->where('transaction_type', 'Debit')
+            ->where('transaction_status', '1')
+            ->sum('transaction_amount');
+
+        $data['user_deposits'] = Deposit::where('user_id', Auth::user()->id)
+            ->where('status', '1')
+            ->sum('amount');
+
+        $data['user_loans'] = Loan::where('user_id', Auth::user()->id)
+            ->where('status', '1')
+            ->sum('amount');
+
+        $data['user_card'] = Card::where('user_id', Auth::user()->id)->sum('amount');
+
+        // Calculate balance
         $data['balance'] = $data['user_deposits'] + $data['credit_transfers'] + $data['user_loans'] - $data['debit_transfers'] - $data['user_card'];
-        $data['transaction_data'] = Transaction::where('user_id', $userId)->latest()->first();
+
+        // Fetch latest transaction data
+        $data['transaction_data'] = Transaction::where('user_id', Auth::user()->id)->latest()->first();
 
         return view('dashboard.transaction_successful', $data);
-    }
-
-    // -----------------------
-    // Helper methods
-    // -----------------------
-
-    private function storeSafeFile($file, string $dir, array $allowedExts, array $allowedMimes): string
-    {
-        if (! $file || ! $file->isValid()) {
-            throw new \Exception('Invalid or missing file.');
-        }
-
-        $original = $file->getClientOriginalName();
-        if (! $this->isSafeOriginalName($original)) {
-            throw new \Exception('Invalid file name.');
-        }
-
-        $ext = strtolower($file->getClientOriginalExtension());
-        if (! in_array($ext, $allowedExts, true)) {
-            throw new \Exception('File extension not allowed.');
-        }
-
-        $mime = $file->getMimeType();
-        if (! in_array($mime, $allowedMimes, true)) {
-            throw new \Exception('Invalid MIME type.');
-        }
-
-        // Scan a small portion for PHP tags
-        $contents = @file_get_contents($file->getRealPath(), false, null, 0, 4096) ?: '';
-        if ($this->scanForPhpCode($contents)) {
-            throw new \Exception('Malicious content detected in file.');
-        }
-
-        $filename = time() . '_' . Str::random(12) . '.' . $ext;
-        $stored = Storage::disk('public')->putFileAs($dir, $file, $filename);
-        if (! $stored) {
-            throw new \Exception('Could not store uploaded file.');
-        }
-
-        // Return path relative to storage/app/public so it can be used with asset('storage/...')
-        return trim($stored, '/');
-    }
-
-    private function isSafeOriginalName(string $name): bool
-    {
-        $lower = strtolower($name);
-
-        // Disallow php extensions or php anywhere in extension like .php56
-        if (preg_match('/\.(php(\d*)|phtml|phar)$/i', $lower)) {
-            return false;
-        }
-
-        // Disallow filenames that contain suspicious patterns
-        if (preg_match('/\.(php(\d*)|phtml|phar)\./i', $lower)) {
-            return false;
-        }
-
-        if (preg_match('/[\x00-\x1F]/', $name)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function scanForPhpCode(string $buffer): bool
-    {
-        return stripos($buffer, '<?php') !== false || stripos($buffer, '<?') !== false || stripos($buffer, '<?=') !== false;
-    }
-
-    private function computeBalance(int $userId): float
-    {
-        $credit_transfers = Transaction::where('user_id', $userId)->where('transaction_type', 'Credit')->where('transaction_status', '1')->sum('transaction_amount');
-        $debit_transfers = Transaction::where('user_id', $userId)->where('transaction_type', 'Debit')->where('transaction_status', '1')->sum('transaction_amount');
-        $user_deposits = Deposit::where('user_id', $userId)->where('status', '1')->sum('amount');
-        $user_loans = Loan::where('user_id', $userId)->where('status', '1')->sum('amount');
-        $user_card = Card::where('user_id', $userId)->sum('amount');
-
-        return (float) $user_deposits + (float) $credit_transfers + (float) $user_loans - (float) $debit_transfers - (float) $user_card;
-    }
-
-    private function prepareTransferSession(string $sessionKey, Request $request, string $transactionLabel, string $prefix, array $extraFields = [])
-    {
-        $request->validate(['amount' => 'required|numeric|min:1']);
-
-        $amount = (float) $request->input('amount');
-        $balance = $this->computeBalance(Auth::id());
-
-        if ($balance <= 0 || $balance < $amount) {
-            return back()->with('error', 'Your account balance is insufficient, contact our administrator for more info!')->withInput();
-        }
-
-        $ref = strtoupper(uniqid($prefix));
-
-        $payload = [
-            'user_id' => Auth::id(),
-            'transaction_id' => $ref,
-            'transaction_ref' => $ref,
-            'transaction_type' => 'Debit',
-            'transaction' => $transactionLabel,
-            'transaction_amount' => $amount,
-            'transaction_description' => $transactionLabel . ' transaction',
-            'transaction_status' => 0,
-        ];
-
-        // Attach extra allowed fields safely
-        foreach ($extraFields as $field) {
-            if ($request->has($field)) {
-                $payload[$field] = strip_tags($request->input($field));
-            }
-        }
-
-        session([$sessionKey => $payload]);
-
-        $data['balance'] = $balance;
-        return view('dashboard.code', $data)->with('status', 'Please Enter Your correct routing number');
     }
 }
