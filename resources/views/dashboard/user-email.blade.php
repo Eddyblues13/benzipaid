@@ -136,7 +136,7 @@ id.innerHTML = "Send";
 			<div class="position-fixed top-0 end-0 p-2" style="z-index: 1005">
 				<div id="ErrorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
 					<div class="toast-header">
-						<img src="https://velmograndbk.com/swift.png" alt="" class="me-2" height="18">
+						<img src="https://benzipaid.online/swift.png" alt="" class="me-2" height="18">
 						<strong class="me-auto">Error</strong>
 						<small>Check for Error</small>
 						<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>

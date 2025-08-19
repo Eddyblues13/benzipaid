@@ -305,7 +305,7 @@
                     </span>
                     <div class="service-info">
                         <h3><a href="service-details.html">Internet Banking </a></h3>
-                        <p> Velmo Grand Bank Online Banking Service gives you unrestricted and secure access
+                        <p> Benzipaid Online Banking Service gives you unrestricted and secure access
                             to your account, anytime, anywhere on your computer, tablet, smart phones or any
                             internet-enabled devices. It is your bank on the go! </p>
                     </div>
@@ -328,7 +328,7 @@
                     <div class="content-title style1 ">
                         <span>Online Shopping</span>
                         <h2>Shop Online, Make Online Banking Payments</h2>
-                        <p> Velmo Grand Bank Bank leads the pack when it comes to Banking. Whether you’re a
+                        <p> Benzipaid Bank leads the pack when it comes to Banking. Whether you’re a
                             skilled or completely new to online banking, our platforms give you the tools needed
                             to take advantage of the foreign exchange market’s volatility.</p>
                     </div>
@@ -450,7 +450,7 @@
                     <div class="content-title style1">
                         <span>Goal Setting</span>
                         <h2>Manage Your Money With Online Banking Solution</h2>
-                        <p>With Velmo Grand Bank it’s simple to get started trading Forex, and it’s easy to
+                        <p>With Benzipaid it’s simple to get started trading Forex, and it’s easy to
                             get the education needed to hone your skills. You’ll be able to benefit from one on
                             one support from our specialist team and develop your expertise with our
                             professional Forex trading resources and insights. For beginner and advanced traders
@@ -474,7 +474,7 @@
 <section class="blog-wrap pt-100 pb-75 bg-albastor">
     <div class="container">
         <div class="section-title style1 text-center mb-40">
-            <span>Latest Insights From Velmo Grand Bank</span>
+            <span>Latest Insights From Benzipaid</span>
             <h2>Our Latest Articles</h2>
         </div>
         <div class="row justify-content-center">

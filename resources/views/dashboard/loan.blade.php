@@ -165,7 +165,7 @@
         ***********************************-->
 <div class="footer">
     <div class="copyright">
-        <p>Copyright © Velmo Grand Bank 2024</p>
+        <p>Copyright © Benzipaid 2024</p>
     </div>
 </div>
 <!--**********************************

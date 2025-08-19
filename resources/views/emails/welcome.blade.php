@@ -5,7 +5,7 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-	<title> Velmo Grand Bank</title>
+	<title> Benzipaid</title>
 
 	<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap"
 		rel="stylesheet" />
@@ -208,11 +208,11 @@
 							<img src="{{asset('asset/img/logo.png')}}" alt="Image" />
 						</center>
 
-						<h2>Welcome to Velmo Grand Bank</h2>
+						<h2>Welcome to Benzipaid</h2>
 						<br>
 						<br>
 						<p style='line-height: 24px;margin-bottom:15px;'>
-							Thanks for joining Velmo Grand Bank as your new home. We're excited to have you on
+							Thanks for joining Benzipaid as your new home. We're excited to have you on
 							board!
 						</p>
 						<p style='line-height: 24px;margin-bottom:15px;'>
@@ -242,7 +242,7 @@
 				<tr class="proton-tr">
 					<td class="proton-td" colspan="10" style="">
 						<h3>Kind Regards,</h3>
-						<p> Velmo Grand Bank</p>
+						<p> Benzipaid</p>
 					</td>
 				</tr>
 
@@ -250,7 +250,7 @@
 					<td class="proton-td" colspan="10" style="">
 						<div class="proton-divider"></div>
 						<center>
-							<span style="color: #706d6b"> © 2024 Velmo Grand Bank</span>
+							<span style="color: #706d6b"> © 2024 Benzipaid</span>
 						</center>
 						<div class="proton-flex">
 							<a href="https://proton.me" class="proton-link">

@@ -5,16 +5,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="keywords" content="">
-    <meta name="author" content=" Velmo Grand Bank">
+    <meta name="author" content=" Benzipaid">
     <meta name="robots" content="noindex, nofollow">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content=" Velmo Grand Bank : ">
-    <meta property="og:title" content=" Velmo Grand Bank : ">
-    <meta property="og:description" content=" Velmo Grand Bank : ">
+    <meta name="description" content=" Benzipaid : ">
+    <meta property="og:title" content=" Benzipaid : ">
+    <meta property="og:description" content=" Benzipaid : ">
     <meta property="og:image" content="admin71.Linit Wavetb.com/images/favicon.png">
     <meta name="format-detection" content="telephone=no">
-    <title> Velmo Grand Bank - Dashboard</title>
+    <title> Benzipaid - Dashboard</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
@@ -74,18 +74,6 @@
             color: unset;
         }
     </style>
-    <!-- Smartsupp Live Chat script -->
-    <script type="text/javascript">
-        var _smartsupp = _smartsupp || {};
-_smartsupp.key = 'f2127c4af756c8dc66e93297a2e1a92b6b953053';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-    </script>
-    <noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
 
 
 </head>

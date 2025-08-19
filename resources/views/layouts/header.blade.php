@@ -16,21 +16,10 @@
     <link rel="stylesheet" href="asset/css/style.css">
     <link rel="stylesheet" href="asset/css/dark-theme.css">
     <link rel="stylesheet" href="asset/css/responsive.css">
-    <title> Velmo Grand Bank- Money Transfer & Banking</title>
+    <title>Benzipaid- Money Transfer & Banking</title>
     <link rel="icon" type="image/png" href="asset/img/favicon.png">
 
-    <!-- Smartsupp Live Chat script -->
-    <script type="text/javascript">
-        var _smartsupp = _smartsupp || {};
-_smartsupp.key = 'f2127c4af756c8dc66e93297a2e1a92b6b953053';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-    </script>
-    <noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
+
 </head>
 
 <body>
@@ -56,7 +45,7 @@ window.smartsupp||(function(d) {
                             <div class="header-top-left">
                                 <ul class="contact-info list-style">
                                     <!--<li><i class="flaticon-call"></i> <a href="https://lowkeypaid.online">+34-917-45-6101</a></li>-->
-                                    <li><i class="flaticon-email-1"></i> <a href="cdn-c">support@velmograndbk.com</a>
+                                    <li><i class="flaticon-email-1"></i> <a href="cdn-c">support@benzipaid.online</a>
                                     </li>
                                     <!--<li><i class="flaticon-pin"></i><p>St. Here Mandalay, New York, U.K</p></li>-->
                                 </ul>

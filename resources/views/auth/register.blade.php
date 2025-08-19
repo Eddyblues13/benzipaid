@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title> Velmo Grand Bank| ACCOUNT</title>
+    <title> Benzipaid| ACCOUNT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
 
@@ -29,7 +29,7 @@
                             <div class="col-7">
                                 <div class="text-primary p-4">
                                     <h5 class="text-primary">Free Register</h5>
-                                    <p>Get your free Velmo Grand Bankaccount now.</p>
+                                    <p>Get your free Benzipaidaccount now.</p>
                                 </div>
                             </div>
                             <div class="col-5 align-self-end">
@@ -704,7 +704,7 @@
                                 <p class="response"></p>
 
                                 <div class="mt-4 text-center">
-                                    <p class="mb-0">By registering you agree to the Velmo Grand Banktb <a href="#"
+                                    <p class="mb-0">By registering you agree to the Benzipaidtb <a href="#"
                                             class="text-primary">Terms of Use</a></p>
                                 </div>
                             </form>
@@ -720,7 +720,7 @@
                             <script>
                                 document.write(new Date().getFullYear())
                             </script> Copyright
-                            <i class="bx bx-check-shield text-success"></i> Velmo Grand Bank
+                            <i class="bx bx-check-shield text-success"></i> Benzipaid
                         </p>
                     </div>
                 </div>

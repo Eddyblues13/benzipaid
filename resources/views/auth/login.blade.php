@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title> Velmo Grand Bank| ACCOUNT</title>
+    <title> Benzipaid| ACCOUNT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
 
@@ -135,7 +135,7 @@
                                 <script>
                                     document.write(new Date().getFullYear())
                                 </script> Copyright
-                                <i class="bx bx-check-shield text-success"></i> Velmo Grand Bank
+                                <i class="bx bx-check-shield text-success"></i> Benzipaid
                             </p>
                         </div>
                     </div>

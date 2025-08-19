@@ -449,10 +449,10 @@
                                                     <td>
                                                         If you have any questions or need assistance with the
                                                         registration process, please don't hesitate to ask at
-                                                        <a href='mailto:support@velmograndbk.com'
+                                                        <a href='mailto:support@benzipaid.online'
                                                             style='color: blue; font-size: 20px; font-family: ' Hind
                                                             Siliguri', Calibri, Sans-serif; font-weight:
-                                                            400;'>support@velmograndbk.com</a>
+                                                            400;'>support@benzipaid.online</a>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -468,11 +468,11 @@
                                 role="presentation">
                                 <tr>
                                     <td class="content-cell" align="center">
-                                        <p class="f-fallback sub align-center">&copy; https://velmograndbk.com/ All
+                                        <p class="f-fallback sub align-center">&copy; https://benzipaid.online/ All
                                             rights reserved.</p>
                                         <p class="f-fallback sub align-center">
-                                            Velmo Grand Bank
-                                            <br>https://velmograndbk.com/
+                                            Benzipaid
+                                            <br>https://benzipaid.online/
                                         </p>
                                     </td>
                                 </tr>
