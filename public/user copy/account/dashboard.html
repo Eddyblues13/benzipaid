@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="ialsmxvxbFVMvehWybzdppDZtGxGJ4kODeqmi07p">
+    <title>Stock Market-Hq | User Dashboard</title>
+    <link rel="icon" href="{{asset('user/account/storage/app/public/photos/uPYDzhfavicon.png1677339254 ')}}" type="image/png"/>
+	
+				<!-- Fonts and icons -->
+		<script src="{{asset('user/account/dash/js/plugin/webfont/webfont.min.js')}}"></script>
+	<!-- Sweet Alert -->
+		<script src="{{asset('user/account/dash/js/plugin/sweetalert/sweetalert.min.js ')}}"></script>
+		<!-- CSS Files -->
+		<link rel="stylesheet" href="{{asset('user/account/dash/css/bootstrap.min.css')}}">
+		<link rel="stylesheet" href="{{asset('user/account/dash/css/fonts.min.css')}}">
+		<link rel="stylesheet" href="{{asset('user/account/dash/css/atlantis.min.css')}}">
+		<link rel="stylesheet" href="{{asset('user/account/dash/css/customs.css')}}">
+		<link rel="stylesheet" href="{{asset('user/account/dash/css/style.css')}}">
+		<link rel="stylesheet" href="{{asset('user/account/dash/css/atlantis.min.css')}}">
+		<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css')}}">
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.21/af-2.3.5/b-1.6.3/b-flash-1.6.3/b-html5-1.6.3/b-print-1.6.3/r-2.2.5/datatables.min.css"/>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>		
+			   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<!-- Bootstrap Notify -->
+		<script src="{{asset('user/account/dash/js/plugin/bootstrap-notify/bootstrap-notify.min.js ')}}"></script>
+		<script src="{{asset('user/account/dash/js/plugin/sweetalert/sweetalert.min.js ')}}"></script>
+		<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.1/dist/alpine.min.js" defer></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
+		<!-- Livewire Styles -->
+<style>
+    [wire\:loading], [wire\:loading\.delay], [wire\:loading\.inline-block], [wire\:loading\.inline], [wire\:loading\.block], [wire\:loading\.flex], [wire\:loading\.table], [wire\:loading\.grid] {
+        display: none;
+    }
+
+    [wire\:offline] {
+        display: none;
+    }
+
+    [wire\:dirty]:not(textarea):not(input):not(select) {
+        display: none;
+    }
+
+    input:-webkit-autofill, select:-webkit-autofill, textarea:-webkit-autofill {
+        animation-duration: 50000s;
+        animation-name: livewireautofill;
+    }
+
+    @keyframes livewireautofill { from {} }
+</style>
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '5a55bf595be90a374202c7cfcd973521cf83995c';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
+		 <!--PayPal-->
+		 <script>
+            // Add your client ID and secret
+            var PAYPAL_CLIENT = 'iidjdjdj';
+            var PAYPAL_SECRET = 'jijdjkdkdk';
+            
+            // Point your server to the PayPal API
+            var PAYPAL_ORDER_API = 'https://api.paypal.com/v2/checkout/orders/';
+        </script>
+        <script src="https://www.paypal.com/sdk/js?client-id=iidjdjdj"></script>
+	 <style type="text/css">
+.footer {
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+ 
+   color: white;
+   text-align: center;
+}
+</style>
+</head>
+<body data-background-color="dark">
+    <div id="app">
+        
+        <!--/PayPal-->
+            
+        <!--Start of Tawk.to Script-->
+        <script type="text/javascript">
+        {tawk to codess}
+        </script>
+        <!--End of Tawk.to Script-->
+		<div class="wrapper">
+			        <div class="main-header">
+    <!-- Logo Header -->
+    <div class="logo-header w3-black" >
+        <a href="/" class="logo" style="font-size: 27px; ">
+          <img src="{{asset('user/account/storage/app/public/photos/uPYDzhlogo.jpg1677339253')}}" alt="" class="mb-3 img-fluid auth__logo"style="width:140px;height:40px;background-color:black;border-radius:10px;margin-top:10px">
+        </a>
+       <button class="ml-auto navbar-toggler sidenav-toggler" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon">
+                <i class="icon-menu"></i>
+            </span>
+        </button>
+        <button class="topbar-toggler more"><i class="icon-options-vertical"></i></button>
+        <div class="nav-toggle">
+            <button class="btn btn-toggle toggle-sidebar">
+                <i class="icon-menu"></i>
+            </button>
+        </div>
+    </div>
+    <!-- End Logo Header -->
+
+    <!-- Navbar Header -->
+    <nav class="navbar navbar-header navbar-expand-lg" data-background-color="dark">
+        
+        <div class="container-fluid">
+              <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+               
+                <li class="nav-item hidden-caret">
+                    <form action="javascript:void(0)" method="post" id="styleform" class="form-inline">
+                       
+                        <div class="form-group">
+                            <label class="style_switch">
+                                <input name="style" id="style" type="checkbox" value="true" class="modes">
+                                <span class="slider round"></span>
+                            </label>
+                        </div> 
+                                                <input type="hidden" name="_token" value="ialsmxvxbFVMvehWybzdppDZtGxGJ4kODeqmi07p">
+                    </form>
+                </li>
+                                <li class="nav-item hidden-caret">
+                    <div id="google_translate_element"></div>
+                </li>
+                               
+                                <li class="nav-item dropdown hidden-caret">
+                    <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fas fa-layer-group"></i><strong style="font-size:8px;">KYC</strong>
+                    </a>
+                    <div class="dropdown-menu quick-actions quick-actions-info animated fadeIn">
+                        <div class="quick-actions-header">
+                            <span class="mb-1 title">KYC verification</span>
+                                                       <span class="subtitle op-8"><a>KYC status: </a></span>
+                                                    </div>
+                        <div class="quick-actions-scroll scrollbar-outer">
+                            <div class="quick-actions-items">
+                                <div class="m-0 row">
+                                                                <a href="#" class="btn btn-success">Verify account </a>
+                                                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                                <li class="nav-item dropdown hidden-caret">
+                    <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user animated fadeIn">
+                        <div class="dropdown-user-scroll scrollbar-outer">
+                            <li>
+                                <div class="user-box">
+                                    
+                                    <div class="u-text">
+                                        <h4>blues wayne</h4>
+                                        <p class="text-muted">blueswayne133@gmail.com</p><a href="" class="btn btn-xs btn-secondary btn-sm">Account Settings</a>
+                                    </div>
+                                </div>
+                            </li>
+                           <li>
+                                
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href=""
+                                    onclick="event.preventDefault();
+                                    document.getElementById('logout-form').submit();">
+                                    Logout
+                                    </a>
+                                <form id="logout-form" action="" method="POST" style="display: none;">
+                                    <input type="hidden" name="_token" value="ialsmxvxbFVMvehWybzdppDZtGxGJ4kODeqmi07p">
+                                </form> 
+                            </li>
+                        </div>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+</div>
+<script type="text/javascript">
+    //create investment
+        $("#styleform").on('change',function(){
+        $.ajax({
+            url: "https://wwww.stockmarket-hq.com/account/dashboard/changetheme",
+            type: 'POST',
+            data:$("#styleform").serialize(),
+            success: function (data) {
+				location.reload(true);
+            },
+            error: function (data) {
+                console.log(data);
+            },
+
+        });
+    });
+    
+</script>        <!-- Stored in resources/views/child.blade.php -->
+
+<!-- Sidebar -->
+
+<div class="sidebar sidebar-style-2 w3-black" >
+    <div class="sidebar-wrapper scrollbar scrollbar-inner">
+        <div class="sidebar-content">
+            <div class="user">
+                 
+                
+                <div class="info">
+                
+                        <span>
+                          Welcome   blues wayne
+                           
+                    </span>
+                    <div class="clearfix"></div>
+                    <p> user account :<i><b>Joint Account</b></i></p>
+                    <p> Aaccount holder<hr>:<i> - <b>blues wayne </b><BR>-
+                     </i></p>
+                    
+                </div>
+                <center>    
+                    <a href=""  onclick="event.preventDefault(); document.getElementById('logout-form').submit();"class="btn btn-sm btn-danger">
+                 
+                                  <i class="fas fa-user" aria-hidden="true"></i>  Logout
+                                    </a>
+                   <form id="logout-form" action="" method="POST" style="display: none;">
+                                    <input type="hidden" name="_token" value="ialsmxvxbFVMvehWybzdppDZtGxGJ4kODeqmi07p">
+                                </form> 
+                    
+               </center>
+            </div>
+            <ul class="nav nav-primary">
+                <li class="nav-item active">
+                    <a href="">
+                        <i class="fas fa-home"style="color:#FF0000"></i>
+                        <p style="color:white">Dashboard</p>
+                    </a>
+                </li>
+               <li class="nav-item ">
+                    <a data-toggle="collapse" href="#mpackD">
+                        <i class="fa fa-arrow-alt-circle-up"style="color:#FF0000"></i>
+                        <p style="color:white">DEPOSIT FUND</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="mpackD">
+                        <ul class="nav nav-collapse">
+                              <li class="nav-item " >
+                    <a href="">
+                        <i class="fa fa-download " ></i>
+                        <p style="color:white">Make Deposit</p>
+                    </a>
+                </li>
+                             <li class="nav-item d-md-none ">
+                    <a href="">
+                        <i class="fa fa-briefcase " aria-hidden="true"></i>
+                        <p style="color:white">Deposit History</p>
+                    </a>
+                </li>
+                        </ul>
+                    </div>
+                </li>               
+                
+ <li class="nav-item ">
+                    <a data-toggle="collapse" href="#mpackw">
+                        <i class="fa fa-coins"style="color:#FF0000"></i>
+                        <p style="color:white">WITHDRAW FUND</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="mpackw">
+                        <ul class="nav nav-collapse">
+                             <li class="nav-item ">
+                    <a href="">
+                        <i class="fa fa-arrow-alt-circle-up " ></i>
+                        <p style="color:white">Withdraw Funds</p>
+                    </a>
+                </li>
+                             <li class="nav-item d-md-none ">
+                    <a href="">
+                        <i class="fa fa-briefcase" aria-hidden="true"></i>
+                        <p style="color:white">Withdraw History</p>
+                    </a>
+                </li>
+                        </ul>
+                    </div>
+                </li>  
+                           
+              
+                
+ <li class="nav-item ">
+                    <a data-toggle="collapse" href="#mpack">
+                        <i class="fas fa-cubes"style="color:#FF0000"></i>
+                        <p style="color:white">STOCK MARKET</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="mpack">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="">
+                                    <span class="sub-item"style="color:white">Buy Stock</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="">
+                                    <span class="sub-item"style="color:white"> Purchase History</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>  
+              
+       <li class="nav-item">
+                    <a data-toggle="collapse" href="#mpacks">
+                        <i class="fas fa-exchange-alt" style="color:#FF0000"></i>
+                        <p style="color:white">TRADE</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="mpacks">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="">
+                                    <span class="sub-item"style="color:white">Copy a trader</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="">
+                                    <span class="sub-item"style="color:white">Trade History</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>  
+              
+             
+              <li class="nav-item">
+                    <a data-toggle="collapse" href="#mpacksS">
+                        <i class="fas fa-users" style="color:#FF0000"></i>
+                        <p style="color:white">SETTINGS</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="mpacksS">
+                        <ul class="nav nav-collapse">
+                                            <li class="nav-item ">
+                    <a href="">
+                        <i class="fa fa-users " aria-hidden="true"></i>
+                        <p style="color:white">Account Settings</p>
+                    </a>
+                </li>  
+                             <li class="nav-item ">
+                    <a href="">
+                        <i class="fa fa-briefcase " aria-hidden="true"></i>
+                        <p style="color:white">Verify Account</p>
+                    </a>
+                </li>
+                
+                        </ul>
+                    </div>
+                </li>  
+              
+             
+             
+             
+              <li class="nav-item">
+                    <a data-toggle="collapse" href="#mpacksSs">
+                        <i class="fas fa-users" style="color:#FF0000"></i>
+                        <p style="color:white">OTHERS</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="mpacksSs">
+                        <ul class="nav nav-collapse">
+                            
+                            <li class="nav-item ">
+                    <a href="{{asset('user/account/dashboard/tradinghistory')}}">
+                        <i class="fa fa-signal " aria-hidden="true"></i>
+                        <p style="color:white">Transactions history</p>
+                    </a>
+                </li>
+                                          <li class="nav-item ">
+                    <a href="{{asset('user/account/dashboard/referuser')}}">
+                        <i class="fa fa-recycle "style="color:#FF0000" aria-hidden="true"></i>
+                        <p style="color:white">Referer Downline</p>
+                    </a>
+                </li>
+                           <li class="nav-item ">
+                    <a href="{{asset('user/account/dashboard/support')}}">
+                        <i class="fa fa-life-ring"style="color:#FF0000" aria-hidden="true"></i>
+                        <p style="color:white">Help/Support</p>
+                    </a>
+                </li>
+                
+                        </ul>
+                    </div>
+                </li>  
+              
+             
+           
+             
+             <!-- TradingView Widget BEGIN -->
+ <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+  {
+  "interval": "1m",
+  "width": 250,
+  "isTransparent": false,
+  "height": 300,
+  "symbol": "NASDAQ:TSLA",
+  "showIntervalTabs": true,
+  "locale": "en",
+  "colorTheme": "dark"
+}
+  </script>
+
+<!-- TradingView Widget END -->
+             
+             
+             
+             
+             
+               
+                               
+               
+                
+                
+             
+             
+                
+               
+            </ul>
+            
+        </div>
+    </div>
+</div>
+<!-- End Sidebar -->
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <div class="main-panel bg-light">
+            <div class="content bg-light">
+            
+                    <div>
+    </div>					<div>
+    </div>	  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "description": "TSLA",
+      "proName": "NASDAQ:TSLA"
+    },
+    {
+      "description": "MSFT",
+      "proName": "NASDAQ:MSFT"
+    },
+    {
+      "description": "GOOGLE",
+      "proName": "NASDAQ:GOOGL"
+    },
+    {
+      "description": "TWITER",
+      "proName": "NYSE:TWTR"
+    },
+    {
+      "description": "AMZN",
+      "proName": "NASDAQ:AMZN"
+    }
+  ],
+  "showSymbolLogo": true,
+  "colorTheme": "light",
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "locale": "en"
+}
+  </script>
+<div class="container"> <p style="color:black;font-size:12pt"> Balance: <b>$0.00</b>
+&nbsp; 
+Invested: <b>  $0.00     </b>
+&nbsp;&nbsp;&nbsp;Equity : <b></b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Avaliable:  <b>$0.00</b>  &nbsp;&nbsp;&nbsp;
+Active trade:  <b>  $0.00    </b>
+&nbsp;&nbsp;Active Stock:  <b>  $0.00    </b>
+</p>
+</div>        <div class="container">  <div class="w3-panel w3-blue">
+            
+  <p>you have an important task left ! Verify your account to use all Stock Market-Hq service
+                        <a href=""class="btn btn-sm btn-danger" style="color:white;border :4px solid white;align:right">Verify user account  </a></p>
+</div>     </div>            
+                 
+                                                                    
+                                
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+    <center>
+                                                                                                                                     
+     <p><a href="" class="rounded btn  btn-sm w3-black">Deposit</a>&nbsp;
+                <a href="" class="rounded btn btn-success btn-sm">Withdraw</a> &nbsp;
+                <a href="" class="rounded btn btn-danger btn-sm">Buy Stock</a>
+                
+             <a href="" class="rounded btn btn-info btn-sm">CopyTrade</a> 
+             </p>   
+                   </center>
+                    <div class="container ">  
+    <h2 styele="color:black;font-size:18pt;color:black">Top Trending Stocks</h2>
+  <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+ 
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+  {
+  "symbols": [
+    [
+      "Apple",
+      "AAPL|1D"
+    ],
+    [
+      "Google",
+      "GOOGL|1D"
+    ],
+    [
+      "Microsoft",
+      "MSFT|1D"
+    ],
+    [
+      "NASDAQ:TSLA|12M"
+    ],
+    [
+      "NETFLIX",
+      "NASDAQ:NFLX|12M"
+    ],
+    [
+      "AMAZON",
+      "NASDAQ:AMZN|12M"
+    ]
+  ],
+  "chartOnly": false,
+  "width": "100%",
+  "height": 250,
+  "locale": "en",
+  "colorTheme": "light",
+  "autosize": false,
+  "showVolume": false,
+  "hideDateRanges": false,
+  "hideMarketStatus": false,
+  "hideSymbolLogo": false,
+  "scalePosition": "right",
+  "scaleMode": "Normal",
+  "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+  "fontSize": "10",
+  "noTimeScale": false,
+  "valuesTracking": "1",
+  "changeMode": "price-and-percent",
+  "chartType": "line"
+}
+  </script>
+</div><br>
+<!-- TradingView Widget END --> 
+
+                 
+                                        <center>
+                             
+                           <p style="color:black;font-family:15pt"> 
+Discover the most popular Stocks available on stockmarket-hq Market</p></center>
+
+
+                                                                    <div class="row" style="margin-bottom:70px">
+                                                                        
+                        
+                         
+                   
+                   
+                    <div class="col-sm-6 col-lg-6 " style="background-color:white;border-right:1px solid gray">
+                        <div class="tradingview-widget-container w3-card">
+ 
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+  {
+  "colorTheme": "light",
+  "dateRange": "12M",
+  "showChart": false,
+  "locale": "en",
+  "width": "100%",
+  "height": "302",
+  "largeChartUrl": "",
+  "isTransparent": true,
+  "showSymbolLogo": true,
+  "showFloatingTooltip": false,
+  "tabs": [
+    {
+      "title": "Stocks",
+      "symbols": [
+        {
+          "s": "NASDAQ:TSLA"
+        },
+        {
+          "s": "NYSE:GME"
+        },
+        {
+          "s": "NASDAQ:NFLX"
+        },
+        {
+          "s": "SIX:MCD"
+        },
+        {
+          "s": "NASDAQ:GOOG"
+        }
+      ],
+      "originalTitle": "Indices"
+    }
+  ]
+}
+  </script>
+</div>
+                      </div> 
+                      
+                      
+                      
+                          <div class="col-sm-6 col-lg-6 "style="background-color:white">
+                        <div class="tradingview-widget-container w3-card">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+  {
+  "colorTheme": "light",
+  "dateRange": "12M",
+  "showChart": false,
+  "locale": "en",
+  "largeChartUrl": "",
+  "isTransparent": true,
+  "showSymbolLogo": true,
+  "showFloatingTooltip": false,
+  "width": "100%",
+  "height": "302",
+  "tabs": [
+    {
+      "title": "Stocks",
+      "symbols": [
+        {
+          "s": "NASDAQ:AMZN"
+        },
+        {
+          "s": "NASDAQ:META"
+        },
+        {
+          "s": "NASDAQ:AAPL"
+        },
+        {
+          "s": "NYSE:KO"
+        },
+        {
+          "s": "NASDAQ:INTC"
+        }
+      ],
+      "originalTitle": "Indices"
+    }
+  ]
+}
+  </script>
+</div>
+                      </div>
+                      
+                    </div>    
+                    <P align="center">	<a href="" class="btn btn-outline-primary"  >BUY STOCK<i class="fas fa-copy"></i></a>  &nbsp;&nbsp;&nbsp;&nbsp;	<a href="" class="btn btn-outline-primary"  >COPY TRADE<i class="fas fa-copy"></i></a></P>
+                    <center><h3 style="color:black">Most Popular Stocks</h3></center>
+  
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+  {
+  "symbols": [
+    [
+      "Apple",
+      "AAPL|1D"
+    ],
+    [
+      "Google",
+      "GOOGL|1D"
+    ],
+    [
+      "Microsoft",
+      "MSFT|1D"
+    ],
+    [
+      "Netflix",
+      "NASDAQ:NFLX|1D"
+    ],
+    [
+      "TELSA INC",
+      "NASDAQ:TSLA|12M"
+    ]
+  ],
+  "chartOnly": false,
+  "width": "100%",
+  "height": "500",
+  "locale": "en",
+  "colorTheme": "light",
+  "autosize": false,
+  "showVolume": false,
+  "hideDateRanges": false,
+  "hideMarketStatus": false,
+  "hideSymbolLogo": false,
+  "scalePosition": "right",
+  "scaleMode": "Normal",
+  "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+  "fontSize": "10",
+  "noTimeScale": false,
+  "valuesTracking": "1",
+  "changeMode": "price-and-percent",
+  "chartType": "line"
+}
+  </script>
+                   
+                    
+                                                 </div>     
+                                                 
+                                            <!-- TradingView Widget BEGIN -->
+
+
+
+<!-- TradingView Widget END -->     
+                                                 
+                                                  <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body w3-black">
+                    <div class="nk-block-head-content mb-4">
+                        <h6 class="text-primary h5">Recent Transactions</h6>
+                    </div>
+                    <ul class="mb-3 nav nav-pills nav-pills-icon nav-justified" id="pills-tab" role="tablist">
+                        <li class="pr-2" role="presentation">
+                            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+                                aria-controls="pills-home" aria-selected="true">
+                                <span class="d-block text-sm">Deposit</span>
+                            </a>
+                        </li>
+                        <li class="px-2" role="presentation">
+                            <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile"
+                                role="tab" aria-controls="pills-profile" aria-selected="false">
+                                <span class="d-block text-sm">Withdrawal</span>
+                            </a>
+                        </li>
+                         <li class="px-2" role="presentation">
+                            <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profilex"
+                                role="tab" aria-controls="pills-profile" aria-selected="false">
+                                <span class="d-block text-sm">Profit</span>
+                            </a>
+                        </li>
+                        
+                        <!--<li class="p-2 nav-item" role="presentation">-->
+                        <!--    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact"-->
+                        <!--        role="tab" aria-controls="pills-contact" aria-selected="false">-->
+                        <!--        <span class="d-block">Others</span>-->
+                        <!--    </a>-->
+                        <!--</li>-->
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                            aria-labelledby="pills-home-tab">
+							<div class="table-responsive">
+								<table id="UserTable" class="table table-hover text- border">
+								
+        									<thead> 
+        										<tr> <th>S/N/Status</th>
+        										<!--	<th>Amount requested</th>-->
+        											<th>Amount + charges</th>
+        											<th>Recieving method</th>
+        										
+        											<th>Date created</th>
+        										</tr> 
+        									</thead> 
+        									<tbody> 
+        										        									</tbody> 
+        								</table>
+							</div>
+
+                        </div>
+                
+                
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+							<div class="table-responsive">
+								<table id="UserTable" class="table table-hover text- border">
+							
+        									<thead> 
+        										<tr> 
+        										<th>S/N/Status</th>
+        											<th>Amount</th>
+        											<th>Payment method</th>
+        										
+        											<th>Date created</th>
+        										</tr> 
+        									</thead> 
+        									<tbody> 
+        										        									</tbody> 
+        								</table>
+								
+							</div>
+                        </div>
+                         <div class="tab-pane fade" id="pills-profilex" role="tabpanel" aria-labelledby="pills-profile-tab">
+							<div class="table-responsive">
+								<table id="UserTable" class="table table-hover text- border">
+							
+									<thead> 
+										<tr> 
+											<th>source / trade</th>
+											<th>Amount</th>
+											<th>Type</th>
+											<th>Date created</th>
+										</tr> 
+									</thead> 
+									<tbody> 
+																		</tbody> 
+								</table>
+									
+							</div>
+                        </div>
+       <!--                 <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">-->
+							<!--<div class="table-responsive">-->
+							<!--	<table id="UserTable" class="table table-hover text- border">-->
+							<!--		<thead>-->
+							<!--			<tr>-->
+							<!--				<th>Amount</th>-->
+							<!--				<th>Type</th>-->
+							<!--				<th>Plan/Narration</th>-->
+							<!--				<th>Date created</th>-->
+							<!--			</tr>-->
+							<!--		</thead>-->
+							<!--		<tbody>-->
+							<!--			-->
+							<!--		</tbody>-->
+							<!--	</table>-->
+							<!--</div>-->
+       <!--                 </div>-->
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <!--end of recent transactions-->            
+                        
+                <!-- end of chart -->
+            </div>  
+    			
+
+<div class="footer w3-white" >
+<div class="w3-bar w3-white">
+  <center> 
+  <table>
+        <tr>
+               <td style="font-size:9pt;text-align:center;">
+                     <a class="" href="" style="margin-right:10px">
+                <img src="{{asset('user/icon/dashboard.png')}}" style="width:20px;height:20px"><br>Dashboard</a>
+            </td>
+            <td style="font-size:9pt;text-align:center;">
+                  <a class="" href="" style="margin-right:10px">
+                <img src="{{asset('user/icon/Copy Trader.png')}}" style="width:20px;height:20px"><br>Deposit</a>
+                </td>
+              
+               <td style="font-size:9pt;text-align:center;">  <a class="" href=""  style="margin-right:10px">
+                   <img src="{{asset('user/icon/history.png')}}" style="width:20px;height:20px"><br>stock</a>
+                   </td>
+              <td style="font-size:9pt;text-align:center;">  <a class="" href="" style="margin-right:10px">
+                  <img src="{{asset('user/icon/exchange.png')}}" style="width:20px;height:20px"><br>Trade</a>
+                  </td>
+          <td style="font-size:8pt;text-align:center;">  
+          
+          <a style="font-size:9pt;text-align:center;"class=" navbar-toggler sidenav-toggler">
+           <img src="{{asset('user/icon/more.png')}}" style="width:20px;height:20px;">
+           <br>Menu</a></td>
+            
+        </tr>
+        </table>
+        </center>
+        
+
+</div>
+</div></div></div>
+
+					
+			
+		
+	
+
+				<!--   Core JS Files   -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		
+		<script src="{{asset('user/account/dash/js/core/popper.min.js')}}"></script>
+		<script src="{{asset('user/account/dash/js/core/bootstrap.min.js')}} "></script>
+		<script src="{{asset('user/account/dash/js/customs.js')}}"></script>
+		
+		<!-- jQuery UI -->
+		<script src="{{asset('user/account/dash/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js')}}"></script>
+		<script src="{{asset('user/account/dash/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js')}}"></script>
+
+		<!-- jQuery Scrollbar -->
+		<script src="{{asset('user/account/dash/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js ')}}"></script>
+
+		<!-- jQuery Sparkline -->
+		<script src="{{asset('user/account/dash/js/plugin/jquery.sparkline/jquery.sparkline.min.js ')}}"></script>
+
+		<!-- Sweet Alert -->
+		<script src="{{asset('user/account/dash/js/plugin/sweetalert/sweetalert.min.js ')}}"></script>
+		<!-- Bootstrap Notify -->
+		<script src="{{asset('user/account/dash/js/plugin/bootstrap-notify/bootstrap-notify.min.js ')}}"></script>
+		
+		<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.21/af-2.3.5/b-1.6.3/b-flash-1.6.3/b-html5-1.6.3/b-print-1.6.3/r-2.2.5/datatables.min.js')}}"></script>
+
+		<script src="{{asset('user/account/dash/js/atlantis.min.js')}}"></script>
+		<script src="{{asset('user/account/dash/js/atlantis.js')}}"></script>
+
+		<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+		<script type="text/javascript">
+			function googleTranslateElementInit() {
+			new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+			}
+		</script>
+
+		<script type="text/javascript">
+			var badWords = [ 
+				'<!--Start of Tawk.to Script-->',
+				'<script type="text/javascript">', 
+				'<!--End of Tawk.to Script-->'
+						];
+			$(':input').on('blur', function(){
+				var value = $(this).val();
+				$.each(badWords, function(idx, word){
+					value = value.replace(word, '');
+				});
+				$(this).val( value);
+			});
+		</script>
+		<script>
+			$(document).ready( function () {
+				$('#ShipTable').DataTable({
+					order: [ [0, 'desc'] ],
+					dom: 'Bfrtip',
+					buttons: [
+					'copy', 'csv', 'print', 'excel','pdf'
+				] 
+				});
+
+				
+				$(".dataTables_length select").addClass("bg-light text-dark");
+				$(".dataTables_filter input").addClass("bg-light text-dark");
+			} );
+		</script>
+		<script>
+			$(document).ready( function () {
+				$('.UserTable').DataTable({
+					order: [ [0, 'desc'] ]
+				});
+				$(".dataTables_length select").addClass("bg-light text-dark");
+				$(".dataTables_filter input").addClass("bg-light text-dark");
+			} );
+		</script>
+				<!-- Livewire Scripts -->
+
+<script src="{{asset('user/livewire/livewire.js?id=25f025805c3c370f7e87')}}" data-turbo-eval="false" data-turbolinks-eval="false"></script>
+<script data-turbo-eval="false" data-turbolinks-eval="false">
+    if (window.livewire) {
+	    console.warn('Livewire: It looks like Livewire\'s @livewireScripts JavaScript assets have already been loaded. Make sure you aren\'t loading them twice.')
+	}
+
+    window.livewire = new Livewire();
+    window.livewire.devTools(true);
+    window.Livewire = window.livewire;
+    window.livewire_app_url = '';
+    window.livewire_token = 'ialsmxvxbFVMvehWybzdppDZtGxGJ4kODeqmi07p';
+
+	/* Make sure Livewire loads first. */
+	if (window.Alpine) {
+	    /* Defer showing the warning so it doesn't get buried under downstream errors. */
+	    document.addEventListener("DOMContentLoaded", function () {
+	        setTimeout(function() {
+	            console.warn("Livewire: It looks like AlpineJS has already been loaded. Make sure Livewire\'s scripts are loaded before Alpine.\\n\\n Reference docs for more info: http://laravel-livewire.com/docs/alpine-js")
+	        })
+	    });
+	}
+
+	/* Make Alpine wait until Livewire is finished rendering to do its thing. */
+    window.deferLoadingAlpine = function (callback) {
+        window.addEventListener('livewire:load', function () {
+            callback();
+        });
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+        window.livewire.start();
+    });
+</script>
+	    
+</body>
+</html>
+
