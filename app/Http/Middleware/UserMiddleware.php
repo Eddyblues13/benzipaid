@@ -22,9 +22,9 @@ class UserMiddleware
         }
 
         // Check if the user status is '0'
-        if (Auth::user()->user_status == '0') {
-            return redirect('ver-account');
-        }
+        // if (Auth::user()->user_status == '0') {
+        //     return redirect('ver-account');
+        // }
 
         // Redirect to home if user status is '1'
         // if (Auth::user()->user_status == '1') {

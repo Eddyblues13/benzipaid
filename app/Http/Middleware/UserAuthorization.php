@@ -22,9 +22,9 @@ class UserAuthorization
 
 
 
-        if (Auth::user()->user_status == '0') {
-            return redirect('index');
-        }
+        // if (Auth::user()->user_status == '0') {
+        //     return redirect('index');
+        // }
         return $next($request);
     }
 }
